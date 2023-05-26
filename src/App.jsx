@@ -3,13 +3,14 @@ import axios from "axios";
 import Loading from "./components/Loading";
 import Simpsons from "./components/Simpsons";
 import "./App.css";
+import Inputs from "./components/Inputs";
 
 class App extends Component {
-  state = {};
+  state = { quoteSearch: "", characterSearch: "" };
 
   async componentDidMount() {
     const { data } = await axios.get(
-      `https://thesimpsonsquoteapi.glitch.me/quotes?count=10`
+      `https://thesimpsonsquoteapi.glitch.me/quotes?count=50`
     );
 
     //fixed the api data to have unique id
@@ -39,8 +40,16 @@ class App extends Component {
     this.setState({ simpsons });
   };
 
+  onQuoteSearch = (e) => {
+    this.setState({ quoteSearch: e.target.value });
+  };
+
+  onCharacterSearch = (e) => {
+    this.setState({ characterSearch: e.target.value });
+  };
+
   render() {
-    const { simpsons } = this.state;
+    const { simpsons, quoteSearch, characterSearch } = this.state;
 
     if (!simpsons) return <Loading />;
 
@@ -52,11 +61,37 @@ class App extends Component {
       if (char.liked) total++;
     });
 
+    let filteredList = [...simpsons];
+
+    if (quoteSearch) {
+      filteredList = simpsons.filter((item) => {
+        if (item.quote.toLowerCase().includes(quoteSearch.toLowerCase())) {
+          return true;
+        }
+      });
+    }
+
+    if (characterSearch) {
+      filteredList = simpsons.filter((item) => {
+        if (
+          item.character.toLowerCase().includes(characterSearch.toLowerCase())
+        ) {
+          return true;
+        }
+      });
+    }
+
     return (
       <>
         <h1>Total no of liked chars #{total}</h1>
-        <Simpsons
+        <Inputs
           simpsons={simpsons}
+          onQuoteSearch={this.onQuoteSearch}
+          onCharacterSearch={this.onCharacterSearch}
+        />
+
+        <Simpsons
+          simpsons={filteredList}
           onDelete={this.onDelete}
           onLikeToggle={this.onLikeToggle}
         />
