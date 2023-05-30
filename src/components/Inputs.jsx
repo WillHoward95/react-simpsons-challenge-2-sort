@@ -5,22 +5,12 @@ class Inputs extends Component {
     return (
       <>
         <p>
-          Search by quote:{" "}
+          Search by quote or character:{" "}
           <input
             type="text"
             name="search"
             id="search"
-            onInput={this.props.onQuoteSearch}
-          />
-        </p>
-
-        <p>
-          Search by character name:{" "}
-          <input
-            type="text"
-            name="search"
-            id="search"
-            onInput={this.props.onCharacterSearch}
+            onInput={this.props.onSearch}
           />
         </p>
       </>

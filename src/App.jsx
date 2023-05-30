@@ -6,7 +6,7 @@ import "./App.css";
 import Inputs from "./components/Inputs";
 
 class App extends Component {
-  state = { quoteSearch: "", characterSearch: "" };
+  state = { search: "" };
 
   async componentDidMount() {
     const { data } = await axios.get(
@@ -40,16 +40,12 @@ class App extends Component {
     this.setState({ simpsons });
   };
 
-  onQuoteSearch = (e) => {
-    this.setState({ quoteSearch: e.target.value });
-  };
-
-  onCharacterSearch = (e) => {
-    this.setState({ characterSearch: e.target.value });
+  onSearch = (e) => {
+    this.setState({ search: e.target.value });
   };
 
   render() {
-    const { simpsons, quoteSearch, characterSearch } = this.state;
+    const { simpsons, search } = this.state;
 
     if (!simpsons) return <Loading />;
 
@@ -63,18 +59,11 @@ class App extends Component {
 
     let filteredList = [...simpsons];
 
-    if (quoteSearch) {
-      filteredList = simpsons.filter((item) => {
-        if (item.quote.toLowerCase().includes(quoteSearch.toLowerCase())) {
-          return true;
-        }
-      });
-    }
-
-    if (characterSearch) {
+    if (search) {
       filteredList = simpsons.filter((item) => {
         if (
-          item.character.toLowerCase().includes(characterSearch.toLowerCase())
+          item.quote.toLowerCase().includes(search.toLowerCase()) ||
+          item.character.toLowerCase().includes(search.toLowerCase())
         ) {
           return true;
         }
@@ -84,11 +73,7 @@ class App extends Component {
     return (
       <>
         <h1>Total no of liked chars #{total}</h1>
-        <Inputs
-          simpsons={simpsons}
-          onQuoteSearch={this.onQuoteSearch}
-          onCharacterSearch={this.onCharacterSearch}
-        />
+        <Inputs simpsons={simpsons} onSearch={this.onSearch} />
 
         <Simpsons
           simpsons={filteredList}
