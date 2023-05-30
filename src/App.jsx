@@ -6,7 +6,7 @@ import "./App.css";
 import Inputs from "./components/Inputs";
 
 class App extends Component {
-  state = { search: "" };
+  state = {};
 
   async componentDidMount() {
     const { data } = await axios.get(
@@ -44,8 +44,18 @@ class App extends Component {
     this.setState({ search: e.target.value });
   };
 
+  onSort = (e) => {
+    this.setState({ sort: e.target.value });
+  };
+
+  onReset = () => {
+    console.log(this.state.simpsons);
+    this.setState({ copy: this.state.simpsons });
+    console.log(this.state.copy);
+  };
+
   render() {
-    const { simpsons, search } = this.state;
+    const { simpsons, search, sort } = this.state;
 
     if (!simpsons) return <Loading />;
 
@@ -70,10 +80,37 @@ class App extends Component {
       });
     }
 
+    if (sort) {
+      filteredList = simpsons.sort((itemOne, itemTwo) => {
+        if (sort === "asc") {
+          if (itemOne.character < itemTwo.character) {
+            return -1;
+          }
+          if (itemOne.character > itemTwo.character) {
+            return 1;
+          }
+        } else if (sort === "desc") {
+          if (itemOne.character < itemTwo.character) {
+            return 1;
+          }
+          if (itemOne.character > itemTwo.character) {
+            return -1;
+          }
+        } else {
+          return;
+        }
+      });
+    }
+
     return (
       <>
         <h1>Total no of liked chars #{total}</h1>
-        <Inputs simpsons={simpsons} onSearch={this.onSearch} />
+        <Inputs
+          simpsons={simpsons}
+          onSearch={this.onSearch}
+          onSort={this.onSort}
+          onReset={this.onReset}
+        />
 
         <Simpsons
           simpsons={filteredList}
