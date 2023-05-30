@@ -48,24 +48,9 @@ class App extends Component {
     this.setState({ sort: e.target.value });
   };
 
-  onReset = () => {
-    console.log(this.state.simpsons);
-    this.setState({ copy: this.state.simpsons });
-    console.log(this.state.copy);
-  };
-
-  render() {
+  getFilteredList = () => {
     const { simpsons, search, sort } = this.state;
-
-    if (!simpsons) return <Loading />;
-
-    if (simpsons.length === 0) return <p>You deleted everything!</p>;
-
-    //calculate the total
-    let total = 0;
-    simpsons.forEach((char) => {
-      if (char.liked) total++;
-    });
+    // console.log(simpsons);
 
     let filteredList = [...simpsons];
 
@@ -81,7 +66,11 @@ class App extends Component {
     }
 
     if (sort) {
-      filteredList = simpsons.sort((itemOne, itemTwo) => {
+      if (sort === "empty") {
+        filteredList = simpsons;
+      }
+
+      filteredList = filteredList.sort((itemOne, itemTwo) => {
         if (sort === "asc") {
           if (itemOne.character < itemTwo.character) {
             return -1;
@@ -102,6 +91,22 @@ class App extends Component {
       });
     }
 
+    return filteredList;
+  };
+
+  render() {
+    const { simpsons } = this.state;
+
+    if (!simpsons) return <Loading />;
+
+    if (simpsons.length === 0) return <p>You deleted everything!</p>;
+
+    //calculate the total
+    let total = 0;
+    simpsons.forEach((char) => {
+      if (char.liked) total++;
+    });
+
     return (
       <>
         <h1>Total no of liked chars #{total}</h1>
@@ -109,11 +114,10 @@ class App extends Component {
           simpsons={simpsons}
           onSearch={this.onSearch}
           onSort={this.onSort}
-          onReset={this.onReset}
         />
 
         <Simpsons
-          simpsons={filteredList}
+          simpsons={this.getFilteredList()}
           onDelete={this.onDelete}
           onLikeToggle={this.onLikeToggle}
         />
